@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:8000";
+const BASE_URL = "https://document-chat-e1qw.onrender.com";
 export async function uploadFile(file: File): Promise<any> {
   const formData = new FormData();
   formData.append("file", file);
