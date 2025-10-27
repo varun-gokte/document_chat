@@ -1,0 +1,6 @@
+__pycache__/
+qdrant_db/
+
+.env
+
+virtual/
