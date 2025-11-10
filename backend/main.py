@@ -8,6 +8,7 @@ import google.generativeai as genai
 from qdrant_db import get_qdrant_collection
 from qdrant_client.http import models
 import uuid
+from functools import lru_cache
 
 load_dotenv()
 app = FastAPI()
@@ -19,8 +20,15 @@ GEMINI_ENDPOINT = "https://generativeai.googleapis.com/v1beta2/models/text-bison
 
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
-genai.configure(api_key=os.getenv("GENAI_API_KEY"))
-model = genai.GenerativeModel("gemini-2.5-flash")
+
+@lru_cache
+def get_genai_model():
+    """Lazy-load and cache Google GenAI model."""
+    if not GEMINI_API_KEY:
+        raise RuntimeError("Missing GENAI_API_KEY environment variable")
+
+    genai.configure(api_key=GEMINI_API_KEY)
+    return genai.GenerativeModel("gemini-2.5-flash")
 
 app.add_middleware(
     CORSMiddleware,
@@ -92,6 +100,7 @@ async def ask(request: AskRequest):
         context = "\n\n".join([c["text"] for c in chunks])
         prompt = f"Answer the following question using only the context below:\n\nContext:\n{context}\n\nQuestion: {request.question}\nAnswer:"
 
+        model = get_genai_model()
         response = model.generate_content(prompt)
 
         # Return both answer and metadata

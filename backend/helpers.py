@@ -2,6 +2,7 @@ import pdfplumber
 from typing import List
 from sentence_transformers import SentenceTransformer
 import numpy as np
+from functools import lru_cache
 
 # 1️⃣ Extract raw text from PDF
 def extract_text_from_pdf(file_path: str) -> str:
@@ -41,8 +42,9 @@ def chunk_text(text: str, chunk_size: int = 500, overlap: int = 50) -> list[dict
       start += chunk_size - overlap
   return chunks
 
-# Load model globally (avoid reloading every request)
-model = SentenceTransformer('all-MiniLM-L6-v2')  # lightweight and fast
+@lru_cache
+def get_embedder():
+    return SentenceTransformer("all-MiniLM-L6-v2")
 
 def generate_embeddings(chunks: List[str]) -> np.ndarray:
     """
@@ -54,7 +56,8 @@ def generate_embeddings(chunks: List[str]) -> np.ndarray:
     Returns:
         np.ndarray: Array of embeddings with shape (num_chunks, embedding_dim)
     """
-    embeddings = model.encode(chunks, convert_to_numpy=True)
+    embedder = get_embedder()
+    embeddings = embedder.encode(chunks, convert_to_numpy=True)
     return embeddings
 
 from qdrant_db import get_qdrant_collection, COLLECTION_NAME
