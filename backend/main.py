@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 from pydantic import BaseModel
 from dotenv import load_dotenv
-from google import genai
+import google.generativeai as genai
 from qdrant_db import get_qdrant_collection
 from qdrant_client.http import models
 import uuid
