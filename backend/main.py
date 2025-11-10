@@ -1,3 +1,4 @@
+from urllib.request import Request
 from helpers import extract_text_from_pdf, normalize_text,chunk_text, generate_embeddings, retrieve_relevant_chunks
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -32,12 +33,17 @@ def get_genai_model():
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://querydocs.netlify.app"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    print(f"REQUEST: {request.method} {request.url}")
+    response = await call_next(request)
+    return response
 
 @app.get("/")
 async def root():
