@@ -19,7 +19,8 @@ GEMINI_ENDPOINT = "https://generativeai.googleapis.com/v1beta2/models/text-bison
 
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
-client = genai.Client(api_key=os.getenv("GENAI_API_KEY"))
+genai.configure(api_key=os.getenv("GENAI_API_KEY"))
+model = genai.GenerativeModel("gemini-2.5-flash")
 
 app.add_middleware(
     CORSMiddleware,
@@ -91,10 +92,7 @@ async def ask(request: AskRequest):
         context = "\n\n".join([c["text"] for c in chunks])
         prompt = f"Answer the following question using only the context below:\n\nContext:\n{context}\n\nQuestion: {request.question}\nAnswer:"
 
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=prompt
-        )
+        response = model.generate_content(prompt)
 
         # Return both answer and metadata
         return {
