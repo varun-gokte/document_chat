@@ -49,6 +49,11 @@ async def root():
     print ('rootzzzzz')
     return {"message": "Hello World"}
 
+@app.post("/test-upload")
+async def test_upload(file: UploadFile = File(...)):
+    print(">>> TEST UPLOAD HIT")
+    return {"filename": file.filename}
+
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
     # Save file temporarily
