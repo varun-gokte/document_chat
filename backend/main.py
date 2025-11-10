@@ -1,6 +1,5 @@
-from urllib.request import Request
 from helpers import extract_text_from_pdf, normalize_text,chunk_text, generate_embeddings, retrieve_relevant_chunks
-from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi import FastAPI, File, UploadFile, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 import os
 from pydantic import BaseModel
@@ -34,7 +33,7 @@ def get_genai_model():
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
