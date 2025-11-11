@@ -1,8 +1,9 @@
 import pdfplumber
 from typing import List
-from sentence_transformers import SentenceTransformer
+import google.generativeai as genai
 import numpy as np
 from functools import lru_cache
+import os
 
 # 1️⃣ Extract raw text from PDF
 def extract_text_from_pdf(file_path: str) -> str:
@@ -42,22 +43,23 @@ def chunk_text(text: str, chunk_size: int = 500, overlap: int = 50) -> list[dict
       start += chunk_size - overlap
   return chunks
 
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 @lru_cache
-def get_embedder():
-    return SentenceTransformer("all-MiniLM-L6-v2")
+def get_embedding_model():
+    """Lazy-load and configure the Gemini Embedding API."""
+    if not GEMINI_API_KEY:
+        raise RuntimeError("Missing GENAI_API_KEY environment variable")
+
+    genai.configure(api_key=GEMINI_API_KEY)
+    return "models/text-embedding-004"
 
 def generate_embeddings(chunks: List[str]) -> np.ndarray:
-    """
-    Generate embeddings for a list of text chunks using SentenceTransformers.
-
-    Args:
-        chunks (List[str]): List of text chunks
-
-    Returns:
-        np.ndarray: Array of embeddings with shape (num_chunks, embedding_dim)
-    """
-    embedder = get_embedder()
-    embeddings = embedder.encode(chunks, convert_to_numpy=True)
+    model = get_embedding_model()
+    response = genai.embed_content(
+        model=model,
+        input=chunks
+    )
+    embeddings = response["embedding"]  
     return embeddings
 
 from qdrant_db import get_qdrant_collection, COLLECTION_NAME
