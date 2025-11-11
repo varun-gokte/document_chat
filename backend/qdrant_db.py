@@ -33,8 +33,8 @@ def get_qdrant_collection() -> QdrantClient:
     client = get_qdrant_client()
 
     if not _collection_ready:
-        collections = [c.name for c in client.get_collections().collections]
-        if COLLECTION_NAME not in collections:
+        existing_collections = [c.name for c in client.get_collections().collections]
+        if COLLECTION_NAME not in existing_collections:
             client.create_collection(
                 collection_name=COLLECTION_NAME,
                 vectors_config=models.VectorParams(
@@ -42,6 +42,15 @@ def get_qdrant_collection() -> QdrantClient:
                     distance=models.Distance.COSINE,
                 )
             )
+
+            # ✅ Wait until Qdrant confirms the collection exists
+            import time
+            while True:
+                collections = [c.name for c in client.get_collections().collections]
+                if COLLECTION_NAME in collections:
+                    break
+                time.sleep(0.2)
+
         _collection_ready = True
 
     return client
