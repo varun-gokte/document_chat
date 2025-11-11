@@ -57,7 +57,7 @@ def generate_embeddings(chunks: List[str]) -> np.ndarray:
     model = get_embedding_model()
     response = genai.embed_content(
         model=model,
-        input=chunks
+        content=chunks
     )
     embeddings = response["embedding"]  
     return embeddings
