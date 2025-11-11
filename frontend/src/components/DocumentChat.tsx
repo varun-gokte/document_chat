@@ -81,8 +81,8 @@ export default function DocumentChat({ pdfUrl }: Props) {
   };
 
   return (
-    <div className="w-full h-screen flex flex-row bg-gray-100">
-     <div
+    <div className="h-[calc(100vh-65px)] flex items-center justify-center bg-gray-100 border">
+      <div
         className="w-1/2 h-full overflow-auto bg-white border-r"
         id="pdf-container"
         ref={containerRef}
@@ -106,7 +106,7 @@ export default function DocumentChat({ pdfUrl }: Props) {
       </div>
 
 
-      <div className="w-1/2 flex flex-col p-4">
+      <div className="w-1/2 h-full flex flex-col p-4">
         <div className="flex-1 overflow-y-auto space-y-3 border rounded-lg p-4 bg-white">
           {messages.map((m, i) => (
             <div

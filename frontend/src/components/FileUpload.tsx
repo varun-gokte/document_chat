@@ -60,7 +60,7 @@ export default function FileUpload({ onUploadSuccess }: FileUploadFormProps) {
   };
 
   return (
-    <div className="h-screen w-screen flex items-center justify-center bg-gray-100">
+    <div className="h-[calc(100vh-100px)] flex items-center justify-center bg-gray-100">
       <Card className="p-8 shadow-xl flex flex-col items-center gap-4 w-[400px]">
         <Typography variant="h6" className="font-semibold">
           Upload a File
