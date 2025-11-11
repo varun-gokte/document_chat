@@ -38,7 +38,7 @@ def get_qdrant_collection() -> QdrantClient:
             client.create_collection(
                 collection_name=COLLECTION_NAME,
                 vectors_config=models.VectorParams(
-                    size=384,  # dimension of MiniLM-L6-v2
+                    size=768,
                     distance=models.Distance.COSINE,
                 )
             )
