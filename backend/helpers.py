@@ -5,7 +5,7 @@ import numpy as np
 from functools import lru_cache
 import os
 
-# 1️⃣ Extract raw text from PDF
+# Extract raw text from PDF
 def extract_text_from_pdf(file_path: str) -> str:
     text = ""
     with pdfplumber.open(file_path) as pdf:
@@ -15,14 +15,14 @@ def extract_text_from_pdf(file_path: str) -> str:
                 text += page_text + "\n"
     return text
 
-# 2️⃣ Normalize the text
+# Normalize the text
 def normalize_text(text: str) -> str:
     # Remove extra whitespace and line breaks
     text = text.replace("\n", " ").replace("\r", " ")
     text = " ".join(text.split())  # remove extra spaces
     return text
 
-# 3️⃣ Chunk the text
+# Chunk the text
 def chunk_text(text: str, chunk_size: int = 500, overlap: int = 50) -> list[dict]:
   """
   Split text into overlapping chunks with metadata.
@@ -30,7 +30,7 @@ def chunk_text(text: str, chunk_size: int = 500, overlap: int = 50) -> list[dict
   """
   chunks = []
   start = 0
-  page = 1  # optional: track page number if you know it from pdfplumber
+  page = 1
   while start < len(text):
       end = start + chunk_size
       chunk_text = text[start:end]

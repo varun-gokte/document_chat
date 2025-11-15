@@ -38,42 +38,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.middleware("http")
-async def log_requests(request: Request, call_next):
-    print(f"REQUEST: {request.method} {request.url}")
-    response = await call_next(request)
-    return response
-
 @app.get("/")
 async def root():
-    print ('rootzzzzz')
     return {"message": "Hello World"}
-
-@app.post("/test-upload")
-async def test_upload(file: UploadFile = File(...)):
-    print(">>> TEST UPLOAD HIT")
-    return {"filename": file.filename}
 
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
     # Save file temporarily
-    print ('in upload')
     temp_path = f"temp_{file.filename}"
     with open(temp_path, "wb") as f:
         f.write(await file.read())
-    print ('saved temp file')
     # Extract, normalize, chunk
     raw_text = extract_text_from_pdf(temp_path)
-    print ('extracted raw text')
     normalized_text = normalize_text(raw_text)
-    print ('normalized text')
     chunks_with_metadata = chunk_text(normalized_text, chunk_size=500, overlap=50)
-    print ('chunked text')
     embeddings = generate_embeddings([c["text"] for c in chunks_with_metadata])
-    print ('embedded text')
 
     client = get_qdrant_collection()
-    print ('got qdrant db')
 
     ids = [str(uuid.uuid4()) for _ in range(len(chunks_with_metadata))]
 
@@ -95,7 +76,6 @@ async def upload_file(file: UploadFile = File(...)):
         ]
     )
     os.remove(temp_path)
-    print ('inserted into qdrant db')
 
     return {
         "filename": file.filename,

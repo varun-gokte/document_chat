@@ -6,6 +6,7 @@ import SendIcon from "@mui/icons-material/Send";
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
 import { askQuestion } from "../apis";
+import ReactMarkdown from "react-markdown";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.js",
@@ -33,11 +34,9 @@ export default function DocumentChat({ pdfUrl }: Props) {
   const sendMessage = async () => {
     if (!input.trim()) return;
 
-    // Add user message to chat
     const userMessage = { role: "user" as const, text: input };
     setMessages((prev) => [...prev, userMessage]);
 
-    // Add temporary "Thinking..." message
     setMessages((prev) => [...prev, { role: "bot", text: "Thinking..." }]);
 
     const userInput = input;
@@ -54,14 +53,14 @@ export default function DocumentChat({ pdfUrl }: Props) {
         const pageEl = pageRefs.current[targetPage];
         if (pageEl) {
           if (containerRef.current && pageEl) {
-          // Scroll container to page element
-          const container = containerRef.current;
-          const topPos = pageEl.offsetTop;
-          container.scrollTo({
-            top: topPos,
-            behavior: "smooth",
-          });
-        }
+            // Scroll container to page element
+            const container = containerRef.current;
+            const topPos = pageEl.offsetTop;
+            container.scrollTo({
+              top: topPos,
+              behavior: "smooth",
+            });
+          }
         }
       }
 
@@ -105,19 +104,22 @@ export default function DocumentChat({ pdfUrl }: Props) {
         </Document>
       </div>
 
-
       <div className="w-1/2 h-full flex flex-col p-4">
         <div className="flex-1 overflow-y-auto space-y-3 border rounded-lg p-4 bg-white">
           {messages.map((m, i) => (
             <div
               key={i}
-              className={`max-w-[80%] px-3 py-2 rounded-lg ${
-                m.role === "user"
+              className={`max-w-[80%] px-3 py-2 rounded-lg 
+                ${m.role === "user"
                   ? "bg-blue-500 text-white self-end ml-auto"
                   : "bg-gray-200 text-gray-800"
-              }`}
+                }`}
             >
-              {m.text}
+              <div className="prose prose-sm max-w-none">
+                <ReactMarkdown>
+                  {m.text}
+                </ReactMarkdown>
+              </div>
             </div>
           ))}
         </div>
@@ -129,6 +131,12 @@ export default function DocumentChat({ pdfUrl }: Props) {
             placeholder="Ask something about the document..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
+             onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                sendMessage();
+              }
+            }}
           />
           <IconButton color="primary" onClick={sendMessage}>
             <SendIcon />
