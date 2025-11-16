@@ -1,5 +1,5 @@
 from helpers import extract_text_from_pdf, normalize_text,chunk_text, generate_embeddings, retrieve_relevant_chunks
-from fastapi import FastAPI, File, UploadFile, HTTPException, Request
+from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import os
 from pydantic import BaseModel
@@ -38,7 +38,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/")
+@app.api_route("/", methods=["GET", "HEAD"])
 async def root():
     return {"message": "Hello World"}
 
