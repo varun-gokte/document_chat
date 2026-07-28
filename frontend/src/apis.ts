@@ -1,5 +1,6 @@
 const BASE_URL = "https://document-chat-e1qw.onrender.com";
-export async function uploadFile(file: File): Promise<any> {
+
+export async function uploadFile(file: File) {
   const formData = new FormData();
   formData.append("file", file);
 
@@ -22,14 +23,15 @@ export interface AskResponse {
 
 export async function askQuestion(
   question: string,
-  pdfUrl: string
+  documentId: string | null,
+  history: { role: "user" | "bot"; text: string }[] = []
 ): Promise<AskResponse> {
   const response = await fetch(`${BASE_URL}/ask`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ question, pdfUrl }),
+    body: JSON.stringify({ question, document_id: documentId, history }),
   });
 
   if (!response.ok) {
@@ -38,10 +40,8 @@ export async function askQuestion(
 
   const data = await response.json();
 
-  // Ensure sources array exists
   return {
     answer: data.answer,
     sources: data.sources || [],
   };
 }
-

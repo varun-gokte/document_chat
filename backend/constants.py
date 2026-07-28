@@ -1,0 +1,9 @@
+CHAT_MODEL = "gemini-2.5-flash"
+GEMINI_ENDPOINT = "https://generativeai.googleapis.com/v1beta2/models/text-bison-001:generate--"
+EMBEDDING_MODEL = "gemini-embedding-001"
+CHUNK_SIZE = 500
+CHUNK_OVERLAP = 50
+DEFAULT_TOP_K = 5
+DOCUMENT_TTL_SECONDS = 3 * 60 * 60
+EMBEDDING_DIM = 3072
+SUMMARY_MAX_INPUT_CHARS = 12000

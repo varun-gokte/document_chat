@@ -3,33 +3,27 @@ import { Document, Page, pdfjs } from "react-pdf";
 import TextField from "@mui/material/TextField";
 import IconButton from "@mui/material/IconButton";
 import SendIcon from "@mui/icons-material/Send";
-import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
-import 'react-pdf/dist/esm/Page/TextLayer.css';
+// import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
+// import 'react-pdf/dist/esm/Page/TextLayer.css';
 import { askQuestion } from "../apis";
 import ReactMarkdown from "react-markdown";
 
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.min.js",
-  import.meta.url
-).toString();
+import pdfWorker from "pdfjs-dist/build/pdf.worker.min.mjs?url";
+
+pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker;
 
 interface Props {
+  documentId: string | null;
   pdfUrl: string;
 }
 
-export default function DocumentChat({ pdfUrl }: Props) {
+export default function DocumentChat({ documentId, pdfUrl }: Props) {
   const [numPages, setNumPages] = useState<number>(0);
-
-  const [messages, setMessages] = useState<
-    { role: "user" | "bot"; text: string }[]
-  >([]);
+  const [messages, setMessages] = useState<{ role: "user" | "bot"; text: string }[]>([]);
   const [input, setInput] = useState("");
   const pageRefs = useRef<(HTMLDivElement|null)[]>([]);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const onDocumentLoad = ({ numPages }: { numPages: number }) => {
-    setNumPages(numPages);
-  };
-  console.log(pageRefs)
+  const onDocumentLoad = ({ numPages }: { numPages: number }) => {setNumPages(numPages)};
 
   const sendMessage = async () => {
     if (!input.trim()) return;
@@ -43,7 +37,7 @@ export default function DocumentChat({ pdfUrl }: Props) {
     setInput("");
 
     try {
-      const response = await askQuestion(userInput, pdfUrl);
+      const response = await askQuestion(userInput, documentId || null, messages.slice(-6));
 
       const { answer, sources } = response;
 

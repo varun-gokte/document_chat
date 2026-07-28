@@ -3,7 +3,7 @@ import { Card, Button, Typography } from "@mui/material";
 import { uploadFile } from "../apis";
 
 interface FileUploadFormProps {
-  onUploadSuccess: (file: File) => void;
+  onUploadSuccess: (documentId: string, file: File) => void;
 }
 
 export default function FileUpload({ onUploadSuccess }: FileUploadFormProps) {
@@ -48,8 +48,8 @@ export default function FileUpload({ onUploadSuccess }: FileUploadFormProps) {
       const result = await uploadFile(file);
       console.log("results", result);
 
-      // ✅ Instead of resetting, notify parent we are ready to move to chat UI
-      onUploadSuccess(file);
+      onUploadSuccess(result.document_id, file);
+      setMessage("File uploaded successfully!");
       
     } catch (err) {
       setMessage("Upload failed. Please try again.");
