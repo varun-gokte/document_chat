@@ -1,7 +1,6 @@
 import { useState } from "react";
 import FileUpload from "./components/FileUpload";
 import DocumentChat from "./components/DocumentChat";
-import Footer from "./components/Footer";
 
 export default function App() {
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);

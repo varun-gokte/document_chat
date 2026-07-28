@@ -14,7 +14,7 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["https://rag-app-varun.netlify.app"],
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
