@@ -1,4 +1,4 @@
-const BASE_URL = "https://document-chat-hduw.onrender.com/";
+const BASE_URL = "https://document-chat-hduw.onrender.com";
 
 export async function uploadFile(file: File) {
   const formData = new FormData();
