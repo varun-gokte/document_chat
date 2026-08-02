@@ -29,3 +29,6 @@ app.include_router(ask_router)
 
 # Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 # virtual/Scripts/activate
+
+# Start backend: python -m uvicorn main:app --reload
+# Qdrant run command: docker run -p 6333:6333 -p 6334:6334 -v "${PWD}:/qdrant/storage" qdrant/qdrant 

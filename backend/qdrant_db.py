@@ -4,7 +4,7 @@ from qdrant_client import QdrantClient
 from qdrant_client.http import models
 from dotenv import load_dotenv
 import time
-from qdrant_client.models import Filter, FieldCondition, Range
+from qdrant_client.models import Filter, FieldCondition, PayloadSchemaType, Range
 from constants import EMBEDDING_DIM, DOCUMENT_TTL_SECONDS
 load_dotenv()
 
@@ -44,6 +44,12 @@ def get_qdrant_collection() -> QdrantClient:
                 ),
             )
 
+            client.create_payload_index(
+                collection_name=COLLECTION_NAME,
+                field_name="uploaded_at",
+                field_schema=PayloadSchemaType.FLOAT,
+            )
+
             # Wait until Qdrant confirms the collection exists, with a timeout
             max_wait_seconds = 10
             waited = 0.0
@@ -71,15 +77,18 @@ def cleanup_old_documents(max_age_seconds: int = DOCUMENT_TTL_SECONDS):
     """
     client = get_qdrant_collection()
     cutoff = time.time() - max_age_seconds
-
-    client.delete(
-        collection_name=COLLECTION_NAME,
-        points_selector=Filter(
-            must=[
-                FieldCondition(
-                    key="uploaded_at",
-                    range=Range(lt=cutoff),
-                )
-            ]
-        ),
-    )
+    print ("In cleanup documents")
+    try:
+        client.delete(
+            collection_name=COLLECTION_NAME,
+            points_selector=Filter(
+                must=[
+                    FieldCondition(
+                        key="uploaded_at",
+                        range=Range(lt=cutoff),
+                    )
+                ]
+            ),
+        )
+    except Exception as e:
+        print(f"Error cleaning up old documents: {e}")

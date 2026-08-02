@@ -1,5 +1,5 @@
 const BASE_URL = "https://document-chat-hduw.onrender.com";
-
+// const BASE_URL = "http://localhost:8000";
 export async function uploadFile(file: File) {
   const formData = new FormData();
   formData.append("file", file);
