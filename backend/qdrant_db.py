@@ -50,6 +50,12 @@ def get_qdrant_collection() -> QdrantClient:
                 field_schema=PayloadSchemaType.FLOAT,
             )
 
+            client.create_payload_index(
+                collection_name=COLLECTION_NAME,
+                field_name="document_id",
+                field_schema=PayloadSchemaType.KEYWORD,
+            )
+
             # Wait until Qdrant confirms the collection exists, with a timeout
             max_wait_seconds = 10
             waited = 0.0

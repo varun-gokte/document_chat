@@ -20,9 +20,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.api_route("/", methods=["GET", "HEAD"])
-async def root():
-    return {"message": "Hello World"}
+@app.api_route("/health", methods=["GET", "HEAD"])
+async def health_check():
+    return {"status": "ok"}
 
 app.include_router(upload_router)
 app.include_router(ask_router)
