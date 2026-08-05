@@ -25,14 +25,14 @@ async def ask(request: AskRequest):
         chunks = await run_in_threadpool(
             retrieve_relevant_chunks, request.question, request.document_id
         )
-        summary = get_document_summary(request.document_id)
+        # summary = get_document_summary(request.document_id)
 
-        if not chunks and not summary:
+        if not chunks:# and not summary:
             return {"answer": "No relevant information found."}
 
         context_parts = []
-        if summary:
-            context_parts.append(f"Document summary: {summary}")
+        # if summary:
+        #     context_parts.append(f"Document summary: {summary}")
         if chunks:
             context_parts.append("\n\n".join(c["text"] for c in chunks))
         context = "\n\n".join(context_parts)

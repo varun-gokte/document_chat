@@ -23,7 +23,7 @@ async def upload_file(file: UploadFile = File(...)):
         raise HTTPException(400, "Only PDF files are supported")
 
     cleanup_old_documents()
-    cleanup_old_summaries(DOCUMENT_TTL_SECONDS)
+    # cleanup_old_summaries(DOCUMENT_TTL_SECONDS)
 
     document_id = str(uuid.uuid4())
     uploaded_at = time.time()
@@ -45,13 +45,13 @@ async def upload_file(file: UploadFile = File(...)):
         if not chunks_with_metadata:
             raise HTTPException(422, "No extractable text found in PDF")
         
-        summary_input = build_summary_input(chunks_with_metadata, max_chars=SUMMARY_MAX_INPUT_CHARS)
+        # summary_input = build_summary_input(chunks_with_metadata, max_chars=SUMMARY_MAX_INPUT_CHARS)
 
-        embeddings, summary = await asyncio.gather(
+        embeddings = await asyncio.gather(
             run_in_threadpool(generate_embeddings, [c["text"] for c in chunks_with_metadata], "RETRIEVAL_DOCUMENT"),
-            run_in_threadpool(generate_document_summary, summary_input),
+            # run_in_threadpool(generate_document_summary, summary_input),
         )
-        save_summary(document_id, summary, uploaded_at)
+        # save_summary(document_id, summary, uploaded_at)
 
         # --- Store chunks in Qdrant ---
         client = get_qdrant_collection()
@@ -84,6 +84,6 @@ async def upload_file(file: UploadFile = File(...)):
         "document_id": document_id,
         "filename": file.filename,
         "num_chunks": len(chunks_with_metadata),
-        "summary": summary,
+        # "summary": summary,
         "first_chunk_preview": chunks_with_metadata[0]["text"][:200],
     }
