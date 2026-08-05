@@ -47,10 +47,9 @@ async def upload_file(file: UploadFile = File(...)):
         
         # summary_input = build_summary_input(chunks_with_metadata, max_chars=SUMMARY_MAX_INPUT_CHARS)
 
-        embeddings = await asyncio.gather(
-            run_in_threadpool(generate_embeddings, [c["text"] for c in chunks_with_metadata], "RETRIEVAL_DOCUMENT"),
+        embeddings = await run_in_threadpool(generate_embeddings, [c["text"] for c in chunks_with_metadata], "RETRIEVAL_DOCUMENT")
             # run_in_threadpool(generate_document_summary, summary_input),
-        )
+        
         # save_summary(document_id, summary, uploaded_at)
 
         # --- Store chunks in Qdrant ---
