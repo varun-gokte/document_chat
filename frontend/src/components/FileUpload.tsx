@@ -46,11 +46,14 @@ export default function FileUpload({ onUploadSuccess }: FileUploadFormProps) {
 
     try {
       const result = await uploadFile(file);
-      console.log("results", result);
 
       onUploadSuccess(result.document_id, file);
       setMessage("File uploaded successfully!");
-      
+      (window as any).goatcounter?.count({
+        path: `upload`,
+        title: `File Upload`,
+        event: true,
+      });
     } catch (err) {
       setMessage("Upload failed. Please try again.");
       console.error(err);
